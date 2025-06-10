@@ -7,6 +7,6 @@ export const defaultConfig: Config = {
     api_key: import.meta.env.VITE_ALGOLIA_API_KEY || 'default_api_key',
     default_timeout_seconds: 30,
     max_results_count: 50,
-    min_refresh_interval_seconds: 10,
-    max_refresh_interval_seconds: 30,
+    min_refresh_interval_seconds: 30,
+    max_refresh_interval_seconds: 120,
 };
