@@ -1,16 +1,11 @@
-import './App.css';
-import { Application } from '@playcanvas/react';
-import { FILLMODE_FILL_WINDOW, RESOLUTION_AUTO } from 'playcanvas';
-import Scene from './Scene';
+import SplatViewer from './components/SplatViewer';
+import './styles/App.css';
 
 function App() {
   return (
-    <Application
-      fillMode={FILLMODE_FILL_WINDOW}
-      resolutionMode={RESOLUTION_AUTO}
-    >
-      <Scene />
-    </Application>
+    <div className="w-full h-full">
+      <SplatViewer />
+    </div>
   );
 }
 
