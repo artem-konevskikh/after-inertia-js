@@ -1,6 +1,7 @@
 import React from 'react';
 import { Entity } from '@playcanvas/react';
-import { Camera, GSplat, Script } from '@playcanvas/react/components';
+import { Camera, Script } from '@playcanvas/react/components';
+import { GSplat } from './CustomGSplat';
 import { OrbitControls } from '@playcanvas/react/scripts';
 import { Script as PcScript } from 'playcanvas'
 import { useSplat } from '@playcanvas/react/hooks';
@@ -10,7 +11,7 @@ interface SplatSceneProps {
 }
 
 class SpinMe extends PcScript {
-    speed = 10;
+    speed = 1;
     update(dt: number) {
         this.entity.rotate(dt * this.speed, dt * this.speed, dt * this.speed)  // @ts-ignore
     }
@@ -59,7 +60,7 @@ const SplatScene: React.FC<SplatSceneProps> = ({ splatUrl }) => {
 
     return (
         <>
-            <Entity position={[0, 2, 5]}>
+            <Entity position={[0, 2, 15]}>
                 <Camera clearColor="#0a0a0a" />
                 <OrbitControls
                     inertiaFactor={0.07}
@@ -71,6 +72,8 @@ const SplatScene: React.FC<SplatSceneProps> = ({ splatUrl }) => {
             <Entity rotation={[0, 10, 0]}>
                 <GSplat
                     asset={asset}
+                    swirlAmount={0.3}
+                    noiseScale={1.5}
                 />
                 <Script script={SpinMe} speed={5} />
             </Entity>
