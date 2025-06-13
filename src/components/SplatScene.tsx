@@ -60,7 +60,7 @@ const SplatScene: React.FC<SplatSceneProps> = ({ splatUrl }) => {
 
     return (
         <>
-            <Entity position={[0, 2, 15]}>
+            <Entity position={[0, 2, 100]}>
                 <Camera clearColor="#0a0a0a" />
                 <OrbitControls
                     inertiaFactor={0.07}
@@ -69,7 +69,7 @@ const SplatScene: React.FC<SplatSceneProps> = ({ splatUrl }) => {
                 />
             </Entity>
 
-            <Entity rotation={[0, 10, 0]}>
+            <Entity rotation={[0, 0, 0, 1]}>
                 <GSplat
                     asset={asset}
                     swirlAmount={0.3}

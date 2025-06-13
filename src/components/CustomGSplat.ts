@@ -4,7 +4,6 @@ import { useLayoutEffect, useRef, type FC } from 'react';
 import {
     type Asset,
     type Entity as PcEntity,
-    type EventHandle,
 } from 'playcanvas';
 import { useParent, useApp } from '@playcanvas/react/hooks';
 import vertex from './gsplat.vert?raw';
@@ -19,31 +18,32 @@ export const GSplat: FC<GsplatProps> = ({ asset, swirlAmount = 1.0, noiseScale =
     const parent: PcEntity = useParent();
     const app = useApp();
     const assetRef = useRef<PcEntity | null>(null);
-    let localTime: number = 0;
+    const localTime = useRef(0);
 
     useLayoutEffect(() => {
-        let handle: EventHandle;
-
         if (asset) {
-            assetRef.current = asset.resource.instantiate({ vertex });
-            parent.addChild(assetRef.current!);
+            const entity = asset.resource.instantiate({ vertex });
+            assetRef.current = entity;
+            parent.addChild(entity);
 
-            handle = app.on('update', (dt: number) => {
-                localTime += dt;
+            const handle = app.on('update', (dt: number) => {
+                localTime.current += dt;
                 const material = assetRef.current?.gsplat?.material;
                 if (material) {
-                    material.setParameter('uTime', localTime);
+                    material.setParameter('uTime', localTime.current);
                     material.setParameter('uSwirlAmount', swirlAmount);
                     material.setParameter('uNoiseScale', noiseScale);
                 }
             });
-        }
 
-        return () => {
-            if (!assetRef.current) return;
-            if (handle) handle.off();
-            parent.removeChild(assetRef.current);
-        };
+            return () => {
+                handle.off();
+                entity.destroy();
+                if (assetRef.current === entity) {
+                    assetRef.current = null;
+                }
+            };
+        }
     }, [asset, parent, swirlAmount, noiseScale]);
 
     return null;
