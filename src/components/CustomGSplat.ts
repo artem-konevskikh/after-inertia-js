@@ -6,15 +6,21 @@ import {
     type Entity as PcEntity,
 } from 'playcanvas';
 import { useParent, useApp } from '@playcanvas/react/hooks';
-import vertex from './gsplat.vert?raw';
+import vertex from './all.vert?raw';
 
 interface GsplatProps {
     asset: Asset;
     swirlAmount?: number;
     noiseScale?: number;
+    shaderMode?: number;
 }
 
-export const GSplat: FC<GsplatProps> = ({ asset, swirlAmount = 1.0, noiseScale = 1.0 }) => {
+export const GSplat: FC<GsplatProps> = ({
+    asset,
+    swirlAmount = 1.0,
+    noiseScale = 1.0,
+    shaderMode = 2
+}) => {
     const parent: PcEntity = useParent();
     const app = useApp();
     const assetRef = useRef<PcEntity | null>(null);
@@ -33,6 +39,7 @@ export const GSplat: FC<GsplatProps> = ({ asset, swirlAmount = 1.0, noiseScale =
                     material.setParameter('uTime', localTime.current);
                     material.setParameter('uSwirlAmount', swirlAmount);
                     material.setParameter('uNoiseScale', noiseScale);
+                    material.setParameter('uShaderMode', shaderMode);
                 }
             });
 
@@ -44,7 +51,7 @@ export const GSplat: FC<GsplatProps> = ({ asset, swirlAmount = 1.0, noiseScale =
                 }
             };
         }
-    }, [asset, parent, swirlAmount, noiseScale]);
+    }, [asset, parent, swirlAmount, noiseScale, shaderMode]);
 
     return null;
 };
