@@ -16,9 +16,11 @@ const SplatViewer: React.FC = () => {
   const loadRandomSplat = useCallback(async () => {
     setLoading(true);
     let url: string | null = null;
+    const maxRetries = 5;
+    let retryCount = 0;
 
     try {
-      while (!url) {
+      while (!url && retryCount < maxRetries) {
         // Choose random city
         const city = getRandomCity(biggestCities);
         setCurrentCity(city);
@@ -29,19 +31,34 @@ const SplatViewer: React.FC = () => {
 
         console.log(`Attempting to load splat near ${city.name} at shifted coords:`, shiftedCoords);
 
-        // Get splat URL
-        url = await getSplat(shiftedCoords.lat, shiftedCoords.lon, defaultConfig);
+        try {
+          // Get splat URL
+          url = await getSplat(shiftedCoords.lat, shiftedCoords.lon, defaultConfig);
 
-        if (url) {
-          setSplatUrl(url);
-          console.log('Loaded splat:', url);
-        } else {
-          console.log(`No splat found near ${city.name}, trying another location...`);
+          if (url) {
+            setSplatUrl(url);
+            console.log('Loaded splat:', url);
+            break;
+          } else {
+            console.log(`No splat found near ${city.name}, trying another location...`);
+          }
+        } catch (err) {
+          const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+          console.error('Error loading splat:', errorMessage);
+        }
+
+        retryCount++;
+        
+        // Add a small delay between retries to prevent tight loops
+        if (!url && retryCount < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-      console.error('Error loading splat:', errorMessage);
+
+      if (!url) {
+        console.error('Failed to load splat after maximum retries');
+        // Optionally, you could show an error message to the user here
+      }
     } finally {
       setLoading(false);
     }
